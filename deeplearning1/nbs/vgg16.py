@@ -27,7 +27,7 @@ def vgg_preprocess(x):
         Subtracts the mean RGB value, and transposes RGB to BGR.
         The mean RGB was computed on the image set used to train the VGG model.
 
-        Args: 
+        Args:
             x: Image array (height x width x channels)
         Returns:
             Image array (height x width x transposed_channels)
@@ -66,7 +66,7 @@ class Vgg16():
             Args:
                 imgs (ndarray)    : An array of N images (size: N x width x height x channels).
                 details : ??
-            
+
             Returns:
                 preds (np.array) : Highest confidence value of the predictions for each image.
                 idxs (np.ndarray): Class index of the predictions with the max confidence.
@@ -91,7 +91,7 @@ class Vgg16():
             Args:
                 layers (int):   The number of zero padded convolution layers
                                 to be added to the model.
-                filters (int):  The number of convolution filters to be 
+                filters (int):  The number of convolution filters to be
                                 created for each layer.
         """
         model = self.model
@@ -169,14 +169,14 @@ class Vgg16():
     def finetune(self, batches):
         """
             Modifies the original VGG16 network architecture and updates self.classes for new training data.
-            
+
             Args:
                 batches : A keras.preprocessing.image.ImageDataGenerator object.
                           See definition for get_batches().
         """
         self.ft(batches.nb_class)
         classes = list(iter(batches.class_indices)) # get a list of all the class labels
-        
+
         # batches.class_indices is a dict with the class name as key and an index as value
         # eg. {'cats': 0, 'dogs': 1}
 
@@ -204,13 +204,13 @@ class Vgg16():
                 validation_data=(val, val_labels), batch_size=batch_size)
 
 
-    def fit(self, batches, val_batches, nb_epoch=1):
+    def fit(self, batches, val_batches, batch_size, nb_epoch=1):
         """
             Fits the model on data yielded batch-by-batch by a Python generator.
             See Keras documentation: https://keras.io/models/model/
         """
-        self.model.fit_generator(batches, samples_per_epoch=batches.nb_sample, nb_epoch=nb_epoch,
-                validation_data=val_batches, nb_val_samples=val_batches.nb_sample)
+        self.model.fit_generator(batches, steps_per_epoch=batches.samples // batch_size, nb_epoch=nb_epoch,
+                validation_data=val_batches, validation_steps=val_batches.samples // batch_size)
 
 
     def test(self, path, batch_size=8):
@@ -218,13 +218,13 @@ class Vgg16():
             Predicts the classes using the trained model on data yielded batch-by-batch.
 
             Args:
-                path (string):  Path to the target directory. It should contain one subdirectory 
+                path (string):  Path to the target directory. It should contain one subdirectory
                                 per class.
                 batch_size (int): The number of images to be considered in each batch.
-            
+
             Returns:
                 test_batches, numpy array(s) of predictions for the test_batches.
-    
+
         """
         test_batches = self.get_batches(path, shuffle=False, batch_size=batch_size, class_mode=None)
         return test_batches, self.model.predict_generator(test_batches, test_batches.nb_sample)
