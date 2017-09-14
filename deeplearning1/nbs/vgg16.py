@@ -42,9 +42,9 @@ class Vgg16():
     """
 
 
-    def __init__(self):
+    def __init__(self, model_dir=None):
         self.FILE_PATH = 'http://files.fast.ai/models/'
-        self.create()
+        self.create(model_dir)
         self.get_classes()
 
 
@@ -114,7 +114,7 @@ class Vgg16():
         model.add(Dropout(0.5))
 
 
-    def create(self):
+    def create(self, dir=None):
         """
             Creates the VGG16 network achitecture and loads the pretrained weights.
 
@@ -136,8 +136,10 @@ class Vgg16():
         model.add(Dense(1000, activation='softmax'))
 
         fname = 'vgg16.h5'
-        model.load_weights(get_file(fname, self.FILE_PATH+fname, cache_subdir='models'))
-
+        if dir == None:
+            model.load_weights(get_file(fname, self.FILE_PATH+fname, cache_subdir='models'))
+        else:
+            model.load_weights(dir+fname)
 
     def get_batches(self, path, gen=image.ImageDataGenerator(), shuffle=True, batch_size=8, class_mode='categorical'):
         """
