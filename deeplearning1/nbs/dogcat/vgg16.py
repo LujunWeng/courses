@@ -229,5 +229,5 @@ class Vgg16():
 
         """
         test_batches = self.get_batches(path, shuffle=False, batch_size=batch_size, class_mode=None)
-        return test_batches, self.model.predict_generator(test_batches, test_batches.samples)
+        return test_batches, self.model.predict_generator(test_batches, test_batches.samples // batch_size)
 

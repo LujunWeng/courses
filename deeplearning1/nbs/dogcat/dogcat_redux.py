@@ -30,7 +30,7 @@ vgg.model.optimizer.lr = 0.01
 
 latest_weights_filename = None
 vgg.model.fit_generator(batches, steps_per_epoch=batches.samples // batch_size, epochs=no_of_epochs, validation_data=val_batches, validation_steps=val_batches.samples // (2*batch_size))
-latest_weights_filename = 'ft%d.h5'
+latest_weights_filename = 'ft.h5'
 print("Saving %s" % latest_weights_filename)
 vgg.model.save_weights(results_path+latest_weights_filename)
 print("Completed %s fit operations" % no_of_epochs)
